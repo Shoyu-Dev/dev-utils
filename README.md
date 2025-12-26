@@ -133,48 +133,6 @@ docker load < dev-utils.tar
 docker run -d -p 8080:80 dev-utils:latest
 ```
 
-## Architecture
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                      Browser                             │
-│  ┌─────────────────────────────────────────────────────┐│
-│  │              React SPA + Service Worker             ││
-│  │     All processing happens here. Zero network.      ││
-│  └─────────────────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────┘
-                           │
-                    (initial load only)
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────┐
-│                 Nginx (Static Files)                     │
-│         Serves HTML, JS, CSS. No backend logic.         │
-└─────────────────────────────────────────────────────────┘
-```
-
-### Security Headers
-
-All responses include strict security headers:
-
-```
-Content-Security-Policy: default-src 'none'; script-src 'self';
-                         style-src 'self' 'unsafe-inline';
-                         connect-src 'none'; ...
-X-Content-Type-Options: nosniff
-X-Frame-Options: DENY
-Referrer-Policy: no-referrer
-```
-
-The `connect-src 'none'` directive is the key privacy guarantee—it makes network requests from JavaScript impossible.
-
-## Tech Stack
-
-- **Frontend:** React 18, TypeScript, Vite
-- **Styling:** CSS with CSS variables (light/dark theme)
-- **Runtime:** Nginx Alpine (~25MB image)
-- **Build:** Multi-stage Docker with validation gates
-- **Testing:** Vitest (unit), Playwright (integration)
 
 ## Development
 
