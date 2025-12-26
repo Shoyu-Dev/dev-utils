@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -57,5 +58,13 @@ export default defineConfig({
   // PRIVACY-CRITICAL: No external dependencies at runtime
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom', 'diff', 'js-yaml', 'ajv', 'papaparse', 'cronstrue']
-  }
+  },
+  // Vitest configuration
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test/setup.ts'],
+    include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+    exclude: ['tests/**/*', 'node_modules/**/*'],
+  },
 });
