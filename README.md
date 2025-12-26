@@ -118,21 +118,7 @@ location /dev-utils/ {
 }
 ```
 
-### Air-Gapped Environments
-
-For networks without internet access:
-
-```bash
-# On a connected machine
-docker save dev-utils:latest > dev-utils.tar
-
-# Transfer dev-utils.tar to air-gapped network
-
-# On the air-gapped machine
-docker load < dev-utils.tar
 docker run -d -p 8080:80 dev-utils:latest
-```
-
 
 ## Development
 
@@ -156,32 +142,17 @@ npm run test:ui     # Playwright integration tests
 npm run lint        # ESLint
 ```
 
-### Project Structure
 
-```
-dev-utils/
-├── src/
-│   ├── tools/          # Tool components (DiffChecker, JwtDecoder, etc.)
-│   ├── pages/          # Home, PrivacyGuarantee, HowToVerify
-│   ├── components/     # Layout, navigation
-│   ├── context/        # Theme context
-│   ├── utils/          # Pure utility functions
-│   └── styles/         # Global CSS
-├── tests/              # Playwright integration tests
-├── Dockerfile          # Multi-stage build
-├── nginx.conf          # Security headers, compression
-└── Makefile            # Docker workflow commands
-```
 
 ## Verifying Privacy Claims
 
-Don't trust us—verify it yourself:
+We encourage you to verify our privacy guarantees yourself:
 
-1. **Network Tab:** Open DevTools → Network → Use any tool → Zero requests
-2. **Offline Mode:** Disconnect from internet → App works fully
-3. **Source Inspection:** All code is bundled and readable in DevTools
+- **Network:** Open DevTools → Network while using any tool — there should be no outgoing requests after the initial page load.
+- **Offline:** Disable network connectivity (or use the browser's offline mode) — the app should continue to function.
+- **Inspect source:** Open DevTools → Sources or view the page source to review the bundled code and confirm there are no external calls.
 
-See the [How to Verify](/verify) page in the app for detailed instructions.
+For step-by-step instructions, see the [How to Verify](/verify) page in the app.
 
 ## Contributing
 
