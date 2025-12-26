@@ -3,6 +3,8 @@ name: Release: Build and Publish Docker image (multi-arch)
 on:
   push:
     branches: ["main"]
+    paths-ignore:
+      - 'README.md'
   workflow_dispatch:
 
 permissions:
