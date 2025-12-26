@@ -2,20 +2,37 @@
    Dev Utils - Global Styles
    ============================================================================= */
 
+/* Light theme (default) */
 :root {
-  /* Colors - Dark theme */
-  --bg-primary: #0f0f1a;
-  --bg-secondary: #1a1a2e;
-  --bg-tertiary: #252542;
-  --text-primary: #e8e8f0;
-  --text-secondary: #a0a0b8;
-  --text-muted: #6b6b80;
-  --accent-primary: #00d9ff;
-  --accent-secondary: #00ff88;
-  --accent-warning: #ffaa00;
-  --accent-error: #ff4466;
-  --border-color: #3a3a5a;
+  --bg-primary: #f5f5f7;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e8e8ed;
+  --text-primary: #1d1d1f;
+  --text-secondary: #3d3d40;
+  --text-muted: #636366;
+  --accent-primary: #0055b3;
+  --accent-secondary: #006644;
+  --accent-warning: #995500;
+  --accent-error: #b32d3a;
+  --border-color: #c7c7cc;
+}
 
+/* Dark theme */
+[data-theme="dark"] {
+  --bg-primary: #1a1a1f;
+  --bg-secondary: #242428;
+  --bg-tertiary: #323236;
+  --text-primary: #f5f5f7;
+  --text-secondary: #c7c7cc;
+  --text-muted: #8e8e93;
+  --accent-primary: #4db3ff;
+  --accent-secondary: #5cd97f;
+  --accent-warning: #ffb733;
+  --accent-error: #ff6b6b;
+  --border-color: #48484a;
+}
+
+:root {
   /* Spacing */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
@@ -76,6 +93,10 @@ body {
 
 .sidebar-header {
   margin-bottom: var(--spacing-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
 }
 
 .sidebar-logo {
@@ -95,6 +116,30 @@ body {
   padding: 2px 6px;
   border-radius: var(--radius-sm);
   text-transform: uppercase;
+  font-weight: 600;
+}
+
+.theme-toggle {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm);
+  cursor: pointer;
+  line-height: 1;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.theme-toggle:hover {
+  background: var(--border-color);
+  color: var(--text-primary);
+}
+
+.theme-toggle svg {
+  display: block;
 }
 
 .nav-section {
