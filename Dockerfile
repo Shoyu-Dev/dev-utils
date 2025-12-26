@@ -45,11 +45,17 @@ FROM base AS build
 # Run TypeScript compilation and Vite build
 RUN npm run build
 
+# Pre-compress static assets for faster nginx serving
+RUN find dist -type f \( -name "*.js" -o -name "*.css" -o -name "*.html" -o -name "*.svg" \) \
+    -exec gzip -9 -k {} \;
+
 # Verify the build output exists and contains expected files
 RUN test -f dist/index.html && \
     echo "Build verification: index.html exists" && \
     grep -q "Content-Security-Policy" dist/index.html && \
-    echo "Build verification: CSP meta tag present"
+    echo "Build verification: CSP meta tag present" && \
+    ls -la dist/assets/*.gz && \
+    echo "Build verification: gzip files created"
 
 # -----------------------------------------------------------------------------
 # Stage 5: Playwright - Run integration tests
