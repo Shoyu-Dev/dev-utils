@@ -10,3 +10,5 @@ declare global {
     __TAURI__?: boolean;
   }
 }
+
+export {};
