@@ -1,11 +1,9 @@
-name: Release: Build and Publish Docker image (multi-arch)
+name: Docker Release
 
 on:
   push:
-    branches: ["main"]
-    paths-ignore:
-      - 'README.md'
-  workflow_dispatch:
+    tags:
+      - 'v*'
 
 permissions:
   contents: read
@@ -32,6 +30,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
       - name: Build and push multi-arch image
         uses: docker/build-push-action@v4
         with:
@@ -41,10 +43,13 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/dev-utils:latest
-            ghcr.io/${{ github.repository_owner }}/dev-utils:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/dev-utils:${{ steps.version.outputs.VERSION }}
+            ghcr.io/${{ github.repository_owner }}/dev-utils:${{ github.ref_name }}
           outputs: type=registry
 
       - name: Post-build info
         run: |
-          echo "Pushed: ghcr.io/${{ github.repository_owner }}/dev-utils:latest"
-          echo "Pushed: ghcr.io/${{ github.repository_owner }}/dev-utils:${{ github.sha }}"
+          echo "Pushed Docker images:"
+          echo "  ghcr.io/${{ github.repository_owner }}/dev-utils:latest"
+          echo "  ghcr.io/${{ github.repository_owner }}/dev-utils:${{ steps.version.outputs.VERSION }}"
+          echo "  ghcr.io/${{ github.repository_owner }}/dev-utils:${{ github.ref_name }}"
