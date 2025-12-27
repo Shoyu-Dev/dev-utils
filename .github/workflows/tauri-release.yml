@@ -1,0 +1,16 @@
+name: Tauri Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    name: Build & Release
+    uses: ./.github/workflows/tauri-build-reusable.yml
+    with:
+      create-release: true
+      tag-name: ${{ github.ref_name }}
+      upload-artifacts: false
+    secrets: inherit
