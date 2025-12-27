@@ -1,0 +1,39 @@
+name: Tauri PR Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'src/**'
+      - 'src-tauri/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/tauri-*.yml'
+
+jobs:
+  build:
+    name: Build & Validate
+    uses: ./.github/workflows/tauri-build-reusable.yml
+    with:
+      create-release: false
+      upload-artifacts: true
+
+  pr-summary:
+    name: PR Build Summary
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Summary
+        run: |
+          echo "## ✅ Tauri Build Validation Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All platform builds completed successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Built Platforms:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ macOS Apple Silicon" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ macOS Intel" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Windows x64" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Windows ARM64" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Linux x64 (.deb, .rpm, .AppImage)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Artifacts are available for download for 7 days." >> $GITHUB_STEP_SUMMARY
