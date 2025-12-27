@@ -20,10 +20,13 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          # macOS - Universal binary (Intel + Apple Silicon)
-          - name: macOS (Universal)
+          # macOS - Build for both architectures
+          - name: macOS Apple Silicon
             os: macos-latest
-            target: universal-apple-darwin
+            target: aarch64-apple-darwin
+          - name: macOS Intel
+            os: macos-latest
+            target: x86_64-apple-darwin
 
           # Windows - x64 and ARM64
           - name: Windows x64
@@ -136,7 +139,8 @@ jobs:
           echo "All platform builds completed successfully!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Built Platforms:" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ macOS (Universal - Intel + Apple Silicon)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ macOS Apple Silicon" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ macOS Intel" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Windows x64" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Windows ARM64" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Linux x64 (.deb, .rpm, .AppImage)" >> $GITHUB_STEP_SUMMARY
