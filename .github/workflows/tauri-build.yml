@@ -101,21 +101,11 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           # Only create release on tags, not PRs
-          tagName: ${{ github.ref_name }}
-          releaseName: 'Dev Utils v__VERSION__'
-          releaseBody: |
-            Cross-platform desktop app for Dev Utils
-
-            ## Downloads
-            - **Windows**: Download the `.msi` or `.exe` installer
-            - **macOS**: Download the `.dmg` (Universal - works on Intel and Apple Silicon)
-            - **Linux**: Download `.AppImage` (universal), `.deb` (Debian/Ubuntu), or `.rpm` (Fedora/RHEL)
-
-            See the [full changelog](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md).
+          tagName: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '' }}
+          releaseName: ${{ startsWith(github.ref, 'refs/tags/') && 'Dev Utils v__VERSION__' || '' }}
+          releaseBody: ${{ startsWith(github.ref, 'refs/tags/') && 'Cross-platform desktop app for Dev Utils\n\n## Downloads\n- **Windows**: Download the `.msi` or `.exe` installer\n- **macOS**: Download the `.dmg`\n- **Linux**: Download `.AppImage` (universal), `.deb` (Debian/Ubuntu), or `.rpm` (Fedora/RHEL)\n\nSee the [full changelog](https://github.com/Shoyu-Dev/dev-utils/blob/main/CHANGELOG.md).' || '' }}
           releaseDraft: true
           prerelease: false
-          # Only publish release on tags, not PRs
-          releaseId: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && 'auto' || '' }}
           args: --target ${{ matrix.platform.target }}
 
       - name: Upload build artifacts (PR only)
