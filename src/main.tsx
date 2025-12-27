@@ -6,7 +6,8 @@ import { ThemeProvider } from './context/ThemeContext';
 import './styles/index.css';
 
 // PRIVACY-CRITICAL: Register service worker for offline capability
-if ('serviceWorker' in navigator) {
+// Do not register service worker when running inside Tauri desktop
+if (!(window as any).__TAURI__ && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(() => {
       // Service worker registration failed - app still works without it

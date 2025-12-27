@@ -134,6 +134,29 @@ npm install
 npm run dev     # Start Vite dev server with HMR
 ```
 
+### Desktop (Tauri) — macOS (local)
+
+You can run and build a self-contained macOS desktop app using Tauri 2.0.
+
+```bash
+# Install dev dependencies (one-time):
+npm install -D @tauri-apps/cli@next
+npm install @tauri-apps/api
+
+# Initialize Tauri (one-time):
+npx tauri init --ci
+
+# Development (launches a desktop window):
+npm run tauri:dev
+
+# Build a release binary (.app and .dmg):
+# This will run the frontend build and then bundle the app
+npm run tauri:build
+# or: npx tauri build
+```
+
+Note: Tauri's `devUrl` should match your Vite dev server port (default 5173). The built artifacts will appear under `src-tauri/target/release/bundle`.
+
 ### Running Tests
 
 ```bash

@@ -21,7 +21,7 @@ else
     PLATFORM_FLAG :=
 endif
 
-.PHONY: help build test test-ui lint run stop clean dev-shell all validate
+.PHONY: help build test test-ui lint run stop clean dev-shell all validate tauri-dev tauri-build tauri-clean
 
 # -----------------------------------------------------------------------------
 # Help - Display available targets
@@ -31,7 +31,7 @@ help:
 	@echo ""
 	@echo "Usage: make <target>"
 	@echo ""
-	@echo "Targets:"
+	@echo "Web App Targets (Docker):"
 	@echo "  build      Build production Docker image (includes lint + unit tests)"
 	@echo "  test       Run unit tests in container"
 	@echo "  test-ui    Run Playwright integration tests in container"
@@ -42,6 +42,11 @@ help:
 	@echo "  dev-shell  Open interactive shell in dev container"
 	@echo "  validate   Run full validation (lint + test + test-ui)"
 	@echo "  all        Build and validate everything"
+	@echo ""
+	@echo "Desktop App Targets (Tauri):"
+	@echo "  tauri-dev    Run Tauri desktop app in development mode"
+	@echo "  tauri-build  Build Tauri desktop app for current platform"
+	@echo "  tauri-clean  Clean Tauri build artifacts"
 	@echo ""
 
 # -----------------------------------------------------------------------------
@@ -178,3 +183,36 @@ all: validate build
 	@echo "Build and validation complete!"
 	@echo "Run 'make run' to start the server"
 	@echo "========================================="
+
+# =============================================================================
+# Tauri Desktop App Targets
+# =============================================================================
+# These targets run natively (not in Docker) and require Node.js and Rust.
+# Install dependencies: npm install && cargo install tauri-cli
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Tauri Dev - Run desktop app in development mode
+# -----------------------------------------------------------------------------
+tauri-dev:
+	@echo "Starting Tauri development server..."
+	@echo "This will open the desktop app with hot-reload enabled"
+	npm run tauri:dev
+
+# -----------------------------------------------------------------------------
+# Tauri Build - Build desktop app for current platform
+# -----------------------------------------------------------------------------
+tauri-build:
+	@echo "Building Tauri desktop app for current platform..."
+	@echo "This will create platform-specific binaries in src-tauri/target/release"
+	npm run tauri:build
+	@echo ""
+	@echo "Build complete! Binaries are in src-tauri/target/release/bundle/"
+
+# -----------------------------------------------------------------------------
+# Tauri Clean - Clean Tauri build artifacts
+# -----------------------------------------------------------------------------
+tauri-clean:
+	@echo "Cleaning Tauri build artifacts..."
+	rm -rf src-tauri/target
+	@echo "Clean complete"
