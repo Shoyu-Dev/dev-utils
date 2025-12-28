@@ -1,5 +1,8 @@
 import { Outlet, NavLink, Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { useSidebar } from '../context/SidebarContext';
+import { ResizeHandle } from './ResizeHandle';
+import { SidebarToggle } from './SidebarToggle';
 
 interface NavItem {
   path: string;
@@ -56,15 +59,26 @@ const infoPages: NavItem[] = [
 
 function Layout() {
   const { theme, toggleTheme } = useTheme();
+  const { width, isCollapsed, isResizing } = useSidebar();
+
+  const sidebarClasses = `sidebar ${isCollapsed ? 'sidebar-collapsed' : ''} ${
+    isResizing ? 'sidebar-resizing' : ''
+  }`;
+
+  const sidebarStyle = {
+    width: isCollapsed ? '60px' : `${width}px`,
+  };
 
   return (
     <div className="app-layout">
-      <aside className="sidebar">
+      <aside id="sidebar" className={sidebarClasses} style={sidebarStyle}>
         <div className="sidebar-header">
-          <Link to="/" className="sidebar-logo">
-            Dev Utils
+          <div className="sidebar-logo-wrapper">
+            <Link to="/" className="sidebar-logo">
+              Dev Utils
+            </Link>
             <span className="privacy-badge">Offline</span>
-          </Link>
+          </div>
           <button
             className="theme-toggle"
             onClick={toggleTheme}
@@ -103,7 +117,8 @@ function Layout() {
                         `nav-link ${isActive ? 'active' : ''}`
                       }
                     >
-                      {label}
+                      <span className="nav-icon">{label.charAt(0)}</span>
+                      <span className="nav-text">{label}</span>
                     </NavLink>
                   </li>
                 ))}
@@ -122,14 +137,18 @@ function Layout() {
                       `nav-link ${isActive ? 'active' : ''}`
                     }
                   >
-                    {label}
+                    <span className="nav-icon">{label.charAt(0)}</span>
+                    <span className="nav-text">{label}</span>
                   </NavLink>
                 </li>
               ))}
             </ul>
           </div>
         </nav>
+        <ResizeHandle />
       </aside>
+
+      <SidebarToggle />
 
       <main className="main-content">
         <Outlet />
