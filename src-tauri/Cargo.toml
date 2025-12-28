@@ -1,0 +1,25 @@
+[package]
+name = "dev-utils"
+version = "0.1.0"
+description = "Privacy-first, browser-only developer utility tools - now as a desktop app"
+authors = ["Shoyu-Dev"]
+license = "MIT"
+repository = "https://github.com/Shoyu-Dev/dev-utils"
+edition = "2021"
+rust-version = "1.71"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "dev_utils_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.0.0-rc.13", features = [] }
+
+[dependencies]
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+log = "0.4"
+tauri = { version = "2.0.0-rc.17", features = [] }
+tauri-plugin-log = "2.0.0-rc"

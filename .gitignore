@@ -24,6 +24,9 @@ Thumbs.db
 .env.local
 .env.*.local
 
+# Project todos (local only)
+todo.json
+
 # Logs
 npm-debug.log*
 yarn-debug.log*
@@ -35,3 +38,6 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Ignore Tauri build outputs
+src-tauri/target/
