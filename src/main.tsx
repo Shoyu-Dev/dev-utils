@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { ThemeProvider } from './context/ThemeContext';
+import { SidebarProvider } from './context/SidebarContext';
 import './styles/index.css';
 
 // PRIVACY-CRITICAL: Register service worker for offline capability
@@ -19,7 +20,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
       <ThemeProvider>
-        <App />
+        <SidebarProvider>
+          <App />
+        </SidebarProvider>
       </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>
