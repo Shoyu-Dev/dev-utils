@@ -34,6 +34,10 @@ jobs:
         id: version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
+      - name: Convert repository owner to lowercase
+        id: lowercase
+        run: echo "OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Build and push multi-arch image
         uses: docker/build-push-action@v4
         with:
@@ -42,14 +46,14 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/dev-utils:latest
-            ghcr.io/${{ github.repository_owner }}/dev-utils:${{ steps.version.outputs.VERSION }}
-            ghcr.io/${{ github.repository_owner }}/dev-utils:${{ github.ref_name }}
+            ghcr.io/${{ steps.lowercase.outputs.OWNER }}/dev-utils:latest
+            ghcr.io/${{ steps.lowercase.outputs.OWNER }}/dev-utils:${{ steps.version.outputs.VERSION }}
+            ghcr.io/${{ steps.lowercase.outputs.OWNER }}/dev-utils:${{ github.ref_name }}
           outputs: type=registry
 
       - name: Post-build info
         run: |
           echo "Pushed Docker images:"
-          echo "  ghcr.io/${{ github.repository_owner }}/dev-utils:latest"
-          echo "  ghcr.io/${{ github.repository_owner }}/dev-utils:${{ steps.version.outputs.VERSION }}"
-          echo "  ghcr.io/${{ github.repository_owner }}/dev-utils:${{ github.ref_name }}"
+          echo "  ghcr.io/${{ steps.lowercase.outputs.OWNER }}/dev-utils:latest"
+          echo "  ghcr.io/${{ steps.lowercase.outputs.OWNER }}/dev-utils:${{ steps.version.outputs.VERSION }}"
+          echo "  ghcr.io/${{ steps.lowercase.outputs.OWNER }}/dev-utils:${{ github.ref_name }}"
