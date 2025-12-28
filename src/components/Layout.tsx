@@ -1,5 +1,8 @@
 import { Outlet, NavLink, Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { useSidebar } from '../context/SidebarContext';
+import { ResizeHandle } from './ResizeHandle';
+import { SidebarToggle } from './SidebarToggle';
 
 interface NavItem {
   path: string;
@@ -56,12 +59,21 @@ const infoPages: NavItem[] = [
 
 function Layout() {
   const { theme, toggleTheme } = useTheme();
+  const { width, isCollapsed, isResizing } = useSidebar();
+
+  const sidebarClasses = `sidebar ${isCollapsed ? 'sidebar-collapsed' : ''} ${
+    isResizing ? 'sidebar-resizing' : ''
+  }`;
+
+  const sidebarStyle = {
+    width: isCollapsed ? '60px' : `${width}px`,
+  };
 
   return (
-    <div className="app-layout">
-      <aside className="sidebar">
-        <div className="sidebar-header">
-          <Link to="/" className="sidebar-logo">
+    <>
+      <header className="app-header">
+        <div className="header-content">
+          <Link to="/" className="header-logo">
             Dev Utils
             <span className="privacy-badge">Offline</span>
           </Link>
@@ -89,13 +101,40 @@ function Layout() {
             )}
           </button>
         </div>
+      </header>
 
-        <nav>
-          {toolCategories.map(({ title, items }) => (
-            <div className="nav-section" key={title}>
-              <h3 className="nav-section-title">{title}</h3>
+      <div className="app-layout">
+        <aside id="sidebar" className={sidebarClasses} style={sidebarStyle}>
+          <div className="sidebar-header">
+            <SidebarToggle />
+          </div>
+
+          <nav>
+            {toolCategories.map(({ title, items }) => (
+              <div className="nav-section" key={title}>
+                <h3 className="nav-section-title">{title}</h3>
+                <ul className="nav-list">
+                  {items.map(({ path, label }) => (
+                    <li key={path}>
+                      <NavLink
+                        to={path}
+                        className={({ isActive }) =>
+                          `nav-link ${isActive ? 'active' : ''}`
+                        }
+                      >
+                        <span className="nav-icon">{label.charAt(0)}</span>
+                        <span className="nav-text">{label}</span>
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+
+            <div className="nav-section">
+              <h3 className="nav-section-title">Info</h3>
               <ul className="nav-list">
-                {items.map(({ path, label }) => (
+                {infoPages.map(({ path, label }) => (
                   <li key={path}>
                     <NavLink
                       to={path}
@@ -103,38 +142,22 @@ function Layout() {
                         `nav-link ${isActive ? 'active' : ''}`
                       }
                     >
-                      {label}
+                      <span className="nav-icon">{label.charAt(0)}</span>
+                      <span className="nav-text">{label}</span>
                     </NavLink>
                   </li>
                 ))}
               </ul>
             </div>
-          ))}
+          </nav>
+          <ResizeHandle />
+        </aside>
 
-          <div className="nav-section">
-            <h3 className="nav-section-title">Info</h3>
-            <ul className="nav-list">
-              {infoPages.map(({ path, label }) => (
-                <li key={path}>
-                  <NavLink
-                    to={path}
-                    className={({ isActive }) =>
-                      `nav-link ${isActive ? 'active' : ''}`
-                    }
-                  >
-                    {label}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </nav>
-      </aside>
-
-      <main className="main-content">
-        <Outlet />
-      </main>
-    </div>
+        <main className="main-content">
+          <Outlet />
+        </main>
+      </div>
+    </>
   );
 }
 
