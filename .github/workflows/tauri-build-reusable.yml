@@ -1,0 +1,126 @@
+name: Tauri Build (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      create-release:
+        description: 'Whether to create a GitHub release'
+        required: false
+        type: boolean
+        default: false
+      tag-name:
+        description: 'Release tag name'
+        required: false
+        type: string
+        default: ''
+      upload-artifacts:
+        description: 'Whether to upload build artifacts'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    name: Build ${{ matrix.platform.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          # macOS - Build for both architectures
+          - name: macOS Apple Silicon
+            os: macos-latest
+            target: aarch64-apple-darwin
+          - name: macOS Intel
+            os: macos-latest
+            target: x86_64-apple-darwin
+
+          # Windows - x64 and ARM64
+          - name: Windows x64
+            os: windows-latest
+            target: x86_64-pc-windows-msvc
+          - name: Windows ARM64
+            os: windows-latest
+            target: aarch64-pc-windows-msvc
+
+          # Linux - x64 only (ARM64 cross-compile is complex)
+          - name: Linux x64
+            os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+
+    runs-on: ${{ matrix.platform.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform.target }}
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - name: Install Linux dependencies
+        if: matrix.platform.os == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libssl-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build Tauri app (Release)
+        if: inputs.create-release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          tagName: ${{ inputs.tag-name }}
+          releaseName: 'Dev Utils v__VERSION__'
+          releaseBody: |
+            Cross-platform desktop app for Dev Utils
+
+            ## Downloads
+            - **Windows**: Download the `.msi` or `.exe` installer
+            - **macOS**: Download the `.dmg`
+            - **Linux**: Download `.AppImage` (universal), `.deb` (Debian/Ubuntu), or `.rpm` (Fedora/RHEL)
+
+            See the [full changelog](https://github.com/Shoyu-Dev/dev-utils/blob/main/CHANGELOG.md).
+          releaseDraft: true
+          prerelease: false
+          args: --target ${{ matrix.platform.target }}
+
+      - name: Build Tauri app (No Release)
+        if: "!inputs.create-release"
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: --target ${{ matrix.platform.target }}
+
+      - name: Upload build artifacts
+        if: inputs.upload-artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tauri-${{ matrix.platform.name }}-${{ github.sha }}
+          path: src-tauri/target/${{ matrix.platform.target }}/release/bundle/
+          retention-days: 7
