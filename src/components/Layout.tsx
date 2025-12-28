@@ -61,10 +61,12 @@ function Layout() {
     <div className="app-layout">
       <aside className="sidebar">
         <div className="sidebar-header">
-          <Link to="/" className="sidebar-logo">
-            Dev Utils
+          <div className="sidebar-logo-wrapper">
+            <Link to="/" className="sidebar-logo">
+              Dev Utils
+            </Link>
             <span className="privacy-badge">Offline</span>
-          </Link>
+          </div>
           <button
             className="theme-toggle"
             onClick={toggleTheme}
