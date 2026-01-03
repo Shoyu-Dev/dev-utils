@@ -105,7 +105,7 @@ jobs:
             - **Linux**: Download `.AppImage` (universal), `.deb` (Debian/Ubuntu), or `.rpm` (Fedora/RHEL)
 
             See the [full changelog](https://github.com/Shoyu-Dev/dev-utils/blob/main/CHANGELOG.md).
-          releaseDraft: true
+          releaseDraft: false
           prerelease: false
           args: --target ${{ matrix.platform.target }}
 
